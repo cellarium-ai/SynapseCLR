@@ -1,4 +1,5 @@
 # SynapseCLR
-A contrastive learning framework for 3D electron microscopy data
+A contrastive learning framework for navigating 3D electron microscopy data
 
-Please stay tuned as this repository will be populated in the next few days!
+![Alt text](./docs/source/_static/overview.png "SynapseCLR Overview")
+
