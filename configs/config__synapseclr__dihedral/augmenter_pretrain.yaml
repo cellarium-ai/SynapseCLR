@@ -1,0 +1,96 @@
+# raw data normalization
+norm_scale: 255.
+intensity_mean: 0.44
+intensity_std: 0.28
+
+# options: 'coupled' or 'decoupled'
+batch_mode: 'coupled'
+
+# how to organize channels at the end?
+channel_organization: 'merged' # options: 'merged', 'separate'
+
+# enable debug mode?
+debug_mode: True
+
+# axial to sagittal relative voxel-to-voxel spacing
+axial_to_sagittal_spacing: 5
+
+# section random blackout ("cutout") rate
+enable_section_cutout: True
+section_cutout_prob: 0.5
+cutout_poisson_rate: 10.
+
+# per-section intensity distortion
+enable_sectional_intensity: True
+sectional_intensity_intercept_min: -0.05
+sectional_intensity_intercept_max: 0.05
+sectional_intensity_slope_min: 0.9
+sectional_intensity_slope_max: 1.1
+sectional_intensity_gamma_min: 0.9
+sectional_intensity_gamma_max: 1.1
+
+# global intensity distortion
+enable_global_intensity: True
+global_intensity_intercept_min: -0.05
+global_intensity_intercept_max: 0.05
+global_intensity_slope_min: 0.9
+global_intensity_slope_max: 1.1
+global_intensity_gamma_min: 0.9
+global_intensity_gamma_max: 1.1
+
+# pixel noise
+enable_pixel_noise: True
+global_additive_gaussian_noise_scale_min: 0.
+global_additive_gaussian_noise_scale_max: 0.05
+global_multiplicative_lognormal_noise_scale_min: 0.
+global_multiplicative_lognormal_noise_scale_max: 0.05
+
+# enable blur
+enable_gaussian_blur: True
+gaussian_blur_prob: 0.5
+gaussian_blur_sigmas: [0.25, 0.5, 0.75]
+
+# swiss cheese
+enable_swiss_cheese: False
+swiss_cheese_max_vol_fraction: 0.3
+swiss_cheese_radii: [5, 7, 9]
+
+# corner cutout
+enable_corner_cutout: True
+corner_cutout_prob: 0.5
+n_corner_cutout_applications: 1
+
+# random cutout
+enable_random_cutout: True
+preserve_center_unmasked: True
+cutout_size_min: 12
+cutout_size_max: 36
+random_cutout_prob: 0.25
+n_random_cutout_applications: 2
+
+# random periphery cutout
+enable_random_periphery_cutout: True
+periphery_cutout_center_max_displacement_fraction: 0.2
+periphery_cutout_center_fraction_min: 0.50
+periphery_cutout_center_fraction_max: 0.75
+random_periphery_cutout_prob: 0.25
+
+# relative displacement w.r.t. to the size of the final volume
+enable_rotation: False
+enable_displacement: True
+global_max_relative_displacement: 0.2
+
+enable_x_flip: True
+enable_y_flip: True
+enable_z_flip: True
+enable_xy_swap: True
+
+# connectivity parameter for determining mask connected components
+enable_active_zone: True
+active_zone_masking_prob: 1.0
+connectivity: 26
+active_zone_inflation_radii: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+# final volume size
+final_crop_size: 192
+final_img_size: 96
