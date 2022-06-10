@@ -17,6 +17,8 @@ SynapseCLR repository is organized as follows:
 ├─ notebooks/             # Notebooks for data pre-processing, interactive analysis, and reproducing paper figures
 ```
 
+If you wish to _explore_ the results, a good starting point is browsing `notebooks` in GitHub. If you wish to _run_ the notebooks, you need to install `pytorch_synapse` and additionally download the contents of `data` and `output`. Instructions for downloading the data and pretrained models will be provided shortly. Finally, if you wish to _pretrain_ SynapseCLR on your own 3D EM image chunks (not necessarily synapses, mind you; mitochondria anyone?), please follow the instructions given in `pytorch_synapse`. You will need to preprocess your data as described in `notebooks/01_data_preprocessing` and modify the code sightly. Feel free to contact us!
+
 # Preprint and Citation
 The bioRxiv preprint for SynapseCLR can be found [here](https://www.biorxiv.org/content/early/2022/06/09/2022.06.07.495207). The BibTeX citation is as follows:
 ```
