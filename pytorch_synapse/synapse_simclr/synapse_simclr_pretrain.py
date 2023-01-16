@@ -14,7 +14,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from synapse_simclr import SynapseSimCLRWorkspace
 import synapse_simclr.utils as utils
 
-torch.backends.cudnn.benchmark = False
+torch.backends.cudnn.benchmark = True
 
 # if in notebook mode, use default arguments
 notebook_mode = False
@@ -162,8 +162,8 @@ def run_synapse_simclr_pretrain_single_epoch(
         
         loss_list.append(loss.item())
         
-        torch.cuda.synchronize()
         torch.cuda.empty_cache()
+        torch.cuda.synchronize()
 
     return loss_list
 

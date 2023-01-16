@@ -72,7 +72,9 @@ class SynapseSimCLRWorkspace:
         log_info("Instantiating synapse dataset ...")
         train_dataset = SynapseDataset(
             dataset_path=args.dataset_path,
-            head=args.dataset_head if args.dataset_head > 0 else None)
+            head=args.dataset_head if args.dataset_head > 0 else None,
+            drop_annotated_synapses=(args.drop_annotated_synapses > 0))
+        log_info(f'- Training dataset size: {len(train_dataset)}')
             
         # instantiate data sampler and loader
         if args.nodes > 1:

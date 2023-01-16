@@ -3,7 +3,7 @@ import numpy as np
 
 from synapse_augmenter import consts
 
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Optional
 from boltons.cacheutils import cachedmethod
 from scipy.spatial.transform import Rotation
 import cc3d
@@ -146,7 +146,6 @@ class SynapseAugmenter:
         self.enable_xy_swap = kwargs['enable_xy_swap']
         
         self.enable_active_zone = kwargs['enable_active_zone']
-        self.active_zone_masking_prob = kwargs['active_zone_masking_prob']
         self.connectivity = kwargs['connectivity']
         self.active_zone_inflation_radii = tuple(kwargs['active_zone_inflation_radii'])
         self.final_crop_size = kwargs['final_crop_size']
@@ -161,6 +160,15 @@ class SynapseAugmenter:
         else:
             raise ValueError
 
+        self.max_inflation_radius = 0
+        if self.enable_active_zone:
+            self.max_inflation_radius = max(self.max_inflation_radius, max(self.active_zone_inflation_radii))
+        if self.enable_swiss_cheese:
+            self.max_inflation_radius = max(self.max_inflation_radius, max(self.swiss_cheese_radii))
+        if self.debug_mode:
+            # print the random state
+            print(f'maximum inflation radius: {self.max_inflation_radius}')
+            
         self.dtype = kwargs['dtype']
         self.device = kwargs['device']
 
@@ -413,30 +421,35 @@ class SynapseAugmenter:
         return affine_intensity_bcxyz, affine_mask_bcxyz
 
     @staticmethod
-    def inflate_binary_mask(mask_bxyz: torch.Tensor, radius: int) -> torch.Tensor:
-        assert radius >= 0
+    def inflate_binary_mask(mask_bxyz: torch.Tensor, radius: int, max_radius: Optional[int] = None) -> torch.Tensor:
         
         if radius == 0:
             return mask_bxyz
         
+        if max_radius is None:
+            max_radius = radius
+        
+        assert max_radius >= radius >= 0
+
         device = mask_bxyz.device
         
-        x = torch.arange(-radius, radius + 1, dtype=torch.float, device=device)[:, None, None]
-        y = torch.arange(-radius, radius + 1, dtype=torch.float, device=device)[None, :, None]
-        z = torch.arange(-radius, radius + 1, dtype=torch.float, device=device)[None, None, :]
+        x = torch.arange(-max_radius, max_radius + 1, dtype=torch.float, device=device)[:, None, None]
+        y = torch.arange(-max_radius, max_radius + 1, dtype=torch.float, device=device)[None, :, None]
+        z = torch.arange(-max_radius, max_radius + 1, dtype=torch.float, device=device)[None, None, :]
         
         struct = ((x.pow(2) + y.pow(2) + z.pow(2)) <= (radius ** 2)).float()
         kern = struct[None, None, ...]
   
         return (torch.nn.functional.conv3d(
-            mask_bxyz[:, None, :, :, :].float(), kern, padding=radius) > 0)[:, 0, :, :, :].type(torch.bool)
+            mask_bxyz[:, None, :, :, :].float(), kern, padding=max_radius) > 0)[:, 0, :, :, :].type(torch.bool)
 
     @staticmethod
     def get_active_zone_binary_mask(
             mask_bcxyz: torch.Tensor,
             connectivity: int,
             active_zone_inflation_radii: Tuple[int],
-            batch_mode: str) -> Tuple[torch.Tensor, int]:
+            batch_mode: str,
+            max_radius: int) -> Tuple[torch.Tensor, int]:
         """
         
         .. note:: this method always has a "coupled" behavior
@@ -506,7 +519,8 @@ class SynapseAugmenter:
             torch.tensor(
                 np.concatenate(active_zone_mask_1xyz_np_list, axis=0),
                 device=mask_bcxyz.device, dtype=torch.bool), 
-            radius=active_zone_inflation_radius)
+            radius=active_zone_inflation_radius,
+            max_radius=max_radius)
 
         return active_zone_mask_bxyz, active_zone_inflation_radius
     
@@ -515,11 +529,13 @@ class SynapseAugmenter:
             intensity_bcxyz: torch.Tensor,
             swiss_cheese_max_vol_fraction: float,
             swiss_cheese_radii: Tuple[int],
-            batch_mode: str):
+            batch_mode: str,
+            max_radius: int):
 
         assert all(radius > 0 for radius in swiss_cheese_radii)
         assert swiss_cheese_max_vol_fraction >= 0.
-
+        assert max(swiss_cheese_radii) <= max_radius
+        
         device = intensity_bcxyz.device
         dtype = intensity_bcxyz.dtype
         batch_size = intensity_bcxyz.shape[0]
@@ -550,7 +566,10 @@ class SynapseAugmenter:
         # inflate the hole indicators by their respective radii and reduce to a single mask
         swiss_cheese_bxyz = torch.sum(
             torch.cat([
-                SynapseAugmenter.inflate_binary_mask(hole_indicator_blxyz[:, l, ...], radius)[:, None, ...]
+                SynapseAugmenter.inflate_binary_mask(
+                    hole_indicator_blxyz[:, l, ...],
+                    radius=radius,
+                    max_radius=max_radius)[:, None, ...]
                 for l, radius in enumerate(swiss_cheese_radii)],
                 dim=1),
             dim=1) > 0
@@ -937,7 +956,8 @@ class SynapseAugmenter:
                 intensity_bcxyz,
                 swiss_cheese_max_vol_fraction=self.swiss_cheese_max_vol_fraction,
                 swiss_cheese_radii=self.swiss_cheese_radii,
-                batch_mode=self.batch_mode)
+                batch_mode=self.batch_mode,
+                max_radius=self.max_inflation_radius)
             
         if self.enable_corner_cutout:
             for _ in range(self.n_corner_cutout_applications):
@@ -988,7 +1008,8 @@ class SynapseAugmenter:
                 mask_bcxyz,
                 connectivity=self.connectivity,
                 active_zone_inflation_radii=self.active_zone_inflation_radii,
-                batch_mode=self.batch_mode)
+                batch_mode=self.batch_mode,
+                max_radius=self.max_inflation_radius)
             
         else:
             
@@ -1007,11 +1028,13 @@ class SynapseAugmenter:
             
             pre_and_cleft_binary_mask_bxyz = SynapseAugmenter.inflate_binary_mask(
                 mask_bcxyz[:, consts.MASK_PRE_SYNAPTIC_NEURON - 1] | mask_bcxyz[:, consts.MASK_SYNAPTIC_CLEFT - 1],
-                radius=chosen_inflation_radius) & active_zone_mask_bxyz
+                radius=chosen_inflation_radius,
+                max_radius=self.max_inflation_radius) & active_zone_mask_bxyz
             
             post_and_cleft_binary_mask_bxyz = SynapseAugmenter.inflate_binary_mask(
                 mask_bcxyz[:, consts.MASK_POST_SYNAPTIC_NEURON - 1] | mask_bcxyz[:, consts.MASK_SYNAPTIC_CLEFT - 1],
-                radius=chosen_inflation_radius) & active_zone_mask_bxyz
+                radius=chosen_inflation_radius,
+                max_radius=self.max_inflation_radius) & active_zone_mask_bxyz
 
             intensity_bcxyz = torch.cat([
                 (intensity_bcxyz[:, 0, ...] * pre_and_cleft_binary_mask_bxyz)[:, None, ...],

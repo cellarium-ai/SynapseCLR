@@ -1,7 +1,7 @@
 # SynapseCLR
-A contrastive learning framework for navigating 3D electron microscopy data. A graphical overview of SynapseCLR pipeline and downstream applications is shown below.
+SynapseCLR is a contrastive learning framework for navigating 3D electron microscopy data. A graphical overview of SynapseCLR pipeline and downstream applications is shown below:
 
-![Alt text](./docs/source/_static/overview.png "SynapseCLR Overview")
+![Alt text](./docs/source/_static/synapseclr_graphical_abstract_1200x1200.png "SynapseCLR Overview")
 
 # Navigating this Repository
 SynapseCLR repository is organized as follows:
@@ -14,7 +14,7 @@ SynapseCLR repository is organized as follows:
 ├─ output/                # SynapseCLR outputs (model weights, interactive analysis results)
 ├─ scripts/               # Helper scripts
 ├─ tables/                # Input and generated DataFrames
-├─ notebooks/             # Notebooks for data pre-processing, interactive analysis, and reproducing paper figures
+└─ notebooks/             # Notebooks for data pre-processing, interactive analysis, and reproducing paper figures
 ```
 
 If you wish to _explore_ the results, a good starting point is browsing `notebooks` in GitHub. If you wish to _run_ the notebooks, you need to install `pytorch_synapse` and additionally download the contents of `data` and `output`. Instructions for downloading the data and pretrained models will be provided shortly. Finally, if you wish to _pretrain_ SynapseCLR on your own 3D EM image chunks (not necessarily synapses, mind you; mitochondria anyone?), please follow the instructions given in `pytorch_synapse`. You will need to preprocess your data as described in `notebooks/01_data_preprocessing` and modify the code sightly. Feel free to contact us!
@@ -26,7 +26,7 @@ You can download SynapseCLR preprocessed data, pretrained models, and analysis r
 ├─ data/                  # Processed 3D EM image chunks
 ├─ ext/                   # External resources (e.g. other pretrained models)
 ├─ output/                # SynapseCLR outputs (model weights, interactive analysis results)
-├─ tables/                # Input and generated DataFrames
+└─ tables/                # Input and generated DataFrames
 ```
 
 # Preprint and Citation

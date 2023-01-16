@@ -8,3 +8,4 @@ boltons
 connected-components-3d
 pyvista
 plotly
+torchinfo

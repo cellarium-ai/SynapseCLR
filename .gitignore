@@ -154,16 +154,10 @@ cython_debug/
 
 # SynapseCLR-specific
 ext/MedicalNet
-data/MICrONS__L23__8_8_40__processed
+data/MICrONS*
 output/analysis
-output/checkpoint__medicalnet
-output/checkpoint__random
-output/checkpoint__synapseclr__dihedral
-output/checkpoint__synapseclr__so3__first_stage
-output/checkpoint__synapseclr__so3__second_stage
-output/checkpoint__synapseclr__so3__second_stage__repeat
-output/checkpoint__synapseclr__so3__second_stage__with_contamination
-output/consensus
-output/gp
+output/checkpoint*
+output/misc*
 tables/*.csv
-
+tables/*.npy
+tmp/

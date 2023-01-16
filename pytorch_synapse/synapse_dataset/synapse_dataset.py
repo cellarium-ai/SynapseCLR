@@ -14,6 +14,7 @@ class SynapseDataset(Dataset):
             dataset_path: str,
             head: Optional[int] = None,
             supervised_mode: bool = False,
+            drop_annotated_synapses: bool = False,
             supervised_column_names: List[str] = [],
             supervised_types: List[str] = [],
             metadata_table: Optional[pd.DataFrame] = None):
@@ -44,6 +45,11 @@ class SynapseDataset(Dataset):
             else:
                 self.meta_df = pd.read_csv(os.path.join(dataset_path, 'meta.csv'))
         
+            if drop_annotated_synapses:
+                meta_ext_df = pd.read_csv(os.path.join(dataset_path, 'meta_ext.csv'))
+                self.meta_df = self.meta_df[~self.meta_df['synapse_id'].isin(meta_ext_df['synapse_id'])]
+                assert len(self.meta_df) > 0
+                
         # truncate the dataset to the first `head` entries? (used for debugging)
         if head is not None:
             self.meta_df = self.meta_df.head(head)
