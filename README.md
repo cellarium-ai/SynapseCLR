@@ -9,12 +9,12 @@ The SynapseCLR repository is organized as follows:
 <repo_root>/
 ├─ pytorch_synapse/       # SynapseCLR Python packages
 ├─ configs/               # Sample configuration files for pretraining SynapseCLR models
-├─ data/                  # Raw and processed 3D EM image chunks
-├─ ext/                   # External resources (e.g. other pretrained models)
-├─ output/                # SynapseCLR outputs (pretrained models, extracted features, interactive analysis results)
 ├─ scripts/               # Helper scripts
-├─ tables/                # Primary and derived resource tables
-└─ notebooks/             # Notebooks for data preprocessing, interactive analysis, and reproducing paper figures
+├─ notebooks/             # Notebooks for data preprocessing, interactive analysis, and reproducing paper figures
+├─ data/                  # (not included in GitHub; see below) Raw and processed 3D EM image chunks
+├─ ext/                   # (not included in GitHub; see below) External resources (e.g. other pretrained models)
+├─ output/                # (not included in GitHub; see below) SynapseCLR outputs (pretrained models, extracted features, interactive analysis results)
+└─ tables/                # (not included in GitHub; see below) Primary and derived resource tables
 ```
 
 If you wish to _explore_ the results, a good starting point is browsing `notebooks` in GitHub. If you wish to _run_ the notebooks, you need to install `pytorch_synapse` and additionally download the contents of `data`, `output`, `ext`, and `tables` directories (not included in this GitHub repository, see below). Finally, if you wish to _pretrain_ SynapseCLR on your own 3D EM image chunks (not necessarily synapses, mind you; mitochondria anyone?), please follow the instructions given in `pytorch_synapse`. You will need to preprocess your data as described in `notebooks/01_data_preprocessing` and maybe modify the code according to the organization of your raw dataset. Feel free to contact us should you run into any problems!
