@@ -4,31 +4,31 @@ SynapseCLR is a contrastive learning framework for navigating 3D electron micros
 ![Alt text](./docs/source/_static/synapseclr_graphical_abstract_1200x1200.png "SynapseCLR Overview")
 
 # Navigating this Repository
-SynapseCLR repository is organized as follows:
+The SynapseCLR repository is organized as follows:
 ```
 <repo_root>/
 ├─ pytorch_synapse/       # SynapseCLR Python packages
-├─ configs/               # Sample configurations for pretraining SynapseCLR models
-├─ data/                  # Processed 3D EM image chunks
+├─ configs/               # Sample configuration files for pretraining SynapseCLR models
+├─ data/                  # Raw and processed 3D EM image chunks
 ├─ ext/                   # External resources (e.g. other pretrained models)
-├─ output/                # SynapseCLR outputs (model weights, interactive analysis results)
+├─ output/                # SynapseCLR outputs (pretrained models, extracted features, interactive analysis results)
 ├─ scripts/               # Helper scripts
-├─ tables/                # Input and generated DataFrames
-└─ notebooks/             # Notebooks for data pre-processing, interactive analysis, and reproducing paper figures
+├─ tables/                # Primary and derived resource tables
+└─ notebooks/             # Notebooks for data preprocessing, interactive analysis, and reproducing paper figures
 ```
 
-If you wish to _explore_ the results, a good starting point is browsing `notebooks` in GitHub. If you wish to _run_ the notebooks, you need to install `pytorch_synapse` and additionally download the contents of `data`, `output`, `ext`, and `tables` directories (not included in this GitHub repository, see below). Finally, if you wish to _pretrain_ SynapseCLR on your own 3D EM image chunks (not necessarily synapses, mind you; mitochondria anyone?), please follow the instructions given in `pytorch_synapse`. You will need to preprocess your data as described in `notebooks/01_data_preprocessing` and modify the code sightly. Feel free to contact us!
+If you wish to _explore_ the results, a good starting point is browsing `notebooks` in GitHub. If you wish to _run_ the notebooks, you need to install `pytorch_synapse` and additionally download the contents of `data`, `output`, `ext`, and `tables` directories (not included in this GitHub repository, see below). Finally, if you wish to _pretrain_ SynapseCLR on your own 3D EM image chunks (not necessarily synapses, mind you; mitochondria anyone?), please follow the instructions given in `pytorch_synapse`. You will need to preprocess your data as described in `notebooks/01_data_preprocessing` and maybe modify the code according to the organization of your raw dataset. Feel free to contact us should you run into any problems!
 
 # Data Download
-You can download SynapseCLR preprocessed data, pretrained models, and analysis results from the public [SynapseCLR Terra workspace](https://app.terra.bio/#workspaces/broad-firecloud-dsde/SynapseCLR). Alternatively, the data can be directly downloaded from the following Google Bucket: `gs://fc-212b2d2b-6b73-4461-87a0-62164cd9b59a`. Please visit [here](https://cloud.google.com/storage/docs/uploads-downloads) to learn more about downloading data from Google buckets and [here](https://terra.bio) to learn ore about Terra.
+You can download SynapseCLR raw and preprocessed data, pretrained models, resource tables, and analysis results from the public [SynapseCLR Terra workspace](https://app.terra.bio/#workspaces/broad-firecloud-dsde/SynapseCLR). Alternatively, the data can be directly downloaded from the following Google Bucket: `gs://fc-212b2d2b-6b73-4461-87a0-62164cd9b59a`. Please visit [here](https://cloud.google.com/storage/docs/uploads-downloads) to learn more about downloading data from Google buckets and [here](https://terra.bio) to learn more about Terra.
 
-The bucket includes the content of the following folders:
+The data bucket includes the following contents:
 ```
 <repo_root>/
-├─ data/                  # Processed 3D EM image chunks
+├─ data/                  # Raw and processed 3D EM image chunks
 ├─ ext/                   # External resources (e.g. other pretrained models)
-├─ output/                # SynapseCLR outputs (model weights, interactive analysis results)
-└─ tables/                # Input and generated DataFrames
+├─ output/                # SynapseCLR outputs (pretrained models, extracted features, interactive analysis results)
+└─ tables/                # Primary and derived resource tables
 ```
 
 # Preprint and Citation
